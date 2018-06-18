@@ -1,0 +1,29 @@
+{
+  "name": "binance_wss_api",
+  "version": "1.0.0",
+  "description": "Binance Websocket Api sample",
+  "main": "index.js",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^4.16.3",
+    "module": "^1.2.5",
+    "node": "^10.4.1",
+    "promise": "^8.0.1",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
+    "websocket": "^1.0.26",
+    "yarn": "^1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node ./examples/wsFetchTicker.js"
+  },
+  "keywords": [
+    "binance",
+    "api",
+    "crypto",
+    "bitcoin"
+  ],
+  "author": "Donghun (Thomas)",
+  "license": "MIT"
+}
