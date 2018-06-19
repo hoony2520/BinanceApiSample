@@ -11,31 +11,15 @@ client.on('connectFailed', (error) => {
     console.log('Connect Error: ' + error.toString());
 });
 
-client.on('connect', (connection) => {
-    console.log('WebSocket Client Connected');
-    connection.on('Error', (error) => {
-        console.log('Connection Error: '+ error.toString());
-    });
-
-    connection.on('close', () => {
-        console.log('echo-protocol Connection Closed');
-    });
-
-
-    connection.on('message', (message) => {
-        if(message.type === 'utf8'){
-            console.log("Received: '"+ message.utf8Data + "'");
-        }
-    });
-});
-
-
 
 let Binance = () => {
 
 
+
+
+
     let setting = {
-        streamName: 'zilbtc@depth'
+        streamName: ''
     };
 
     async function connectWebSocket(params){
@@ -43,6 +27,7 @@ let Binance = () => {
             let response = await client.connect(WEB_SOCKET_HOST_URL+params.streamName, '', '', '', '');
             response = JSON.parse(response);
 
+            console.log("asdfasdf\t\t\t" +response);
             return response;
         }catch (e) {
             return console.log("connectWebSocket(), Error has been occurred: " + e);
@@ -55,8 +40,8 @@ let Binance = () => {
     return {
         setParams: async (params = {}) => {
             setting.streamName = params.streamName;
-
-            return connectWebSocket(setting);
+            connectWebSocket(setting);
+            return client;
         }
     };
 

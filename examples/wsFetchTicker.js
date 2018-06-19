@@ -1,14 +1,59 @@
 const Binance = require('../index')();
 
 
+
 (async function(){
-    let options = {
-        streamName: 'btcusdt@ticker'
-    };
+
+    let coinSymbol = process.argv[2];
+    let allMarketFlag = false;
+    let options = {};
+
+    if(coinSymbol === undefined){
+        coinSymbol = 'btcusdt';     // default
+    }else if(coinSymbol === "all"){
+        allMarketFlag = true;
+    }else if(coinSymbol === "help"){
+        console.log("usage: node "+process.argv[1]+" btcusdt");
+        console.log("usage: node "+process.argv[1]+" all");
+        return;
+    }
+
+    console.log(coinSymbol);
+
+    if(!allMarketFlag){
+        options = {
+            streamName: coinSymbol +'@ticker'     // put your interested coin symbol such as btcusdt, ethbtc something like that.
+        };
+    }else{
+        options = {
+            streamName: "!ticker@arr"       // all trading pair stream
+        }
+    }
 
 
     try{
-        await Binance.setParams(options);
+        /* handling wsStream */
+        await Binance.setParams(options).then(value => {
+            value.on('connect', (connection) => {
+                console.log('WebSocket Client Connected');
+                connection.on('Error', (error) => {
+                    console.log('Connection Error: '+ error.toString());
+                });
+
+                connection.on('close', () => {
+                    console.log('echo-protocol Connection Closed');
+                });
+
+
+                connection.on('message', (message) => {
+                    if(message.type === 'utf8'){
+                        console.log("Received: "+ message.utf8Data);
+                    }
+                });
+            });
+        });
+
+
 
     }catch (e) {
         console.log("Error! " +e);

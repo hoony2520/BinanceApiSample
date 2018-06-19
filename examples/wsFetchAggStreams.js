@@ -1,16 +1,44 @@
-const Binance = require('./index');
+const Binance = require('../index')();
 
 (async function () {
 
+
+    let coinSymbol = process.argv[2];
+
+    if(coinSymbol === undefined){
+        coinSymbol = 'btcusdt';     // default
+    }else if(coinSymbol === "help"){
+        console.log("usage: node "+process.argv[1]+" btcusdt");
+        return;
+    }
+
     let options = {
-        streamName: 'zilbtc@aggTrade'       // put your interested currency
+        streamName: coinSymbol+'@aggTrade'       // put your interested currency
     };
 
     try{
-        await Binance.setParams(options);
+        await Binance.setParams(options).then(value => {
+            value.on('connect', (connection) => {
+                console.log('WebSocket Client Connected');
+                connection.on('Error', (error) => {
+                    console.log('Connection Error: '+ error.toString());
+                });
+
+                connection.on('close', () => {
+                    console.log('echo-protocol Connection Closed');
+                });
+
+
+                connection.on('message', (message) => {
+                    if(message.type === 'utf8'){
+                        console.log("Received: "+ message.utf8Data);
+                    }
+                });
+            });
+        });
 
     }catch (e) {
-        console.log("Error! " +e);
+        console.log("AggStreamError! " +e);
     }
 
 
