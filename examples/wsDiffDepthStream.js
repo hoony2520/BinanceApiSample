@@ -1,10 +1,8 @@
 const Binance = require('../index')();
 
 (async function () {
-
-
     let coinSymbol = process.argv[2];
-    let levels = process.argv[3];
+
 
     let options = {};
 
@@ -12,18 +10,13 @@ const Binance = require('../index')();
         coinSymbol = 'btcusdt';     // default
     }else if(coinSymbol === "help"){
         console.log("usage: node "+process.argv[1]+" btcusdt");
-        console.log("Available levels are as below. Default value is 5");
-        console.log("5, 10, 20");
         return;
     }
 
-    if(levels === undefined){
-        levels = "5";           // default
-    }
 
 
     options = {
-        streamName: coinSymbol+"@depth"+ levels
+        streamName: coinSymbol+"@depth"
     };
 
 
@@ -49,7 +42,7 @@ const Binance = require('../index')();
                 });
             });
         }).catch(reason => {
-            console.log("wsPartialBookStream() "+ reason);
+            console.log("wsDiffDepthStream() "+ reason);
         });
 
 
@@ -57,30 +50,32 @@ const Binance = require('../index')();
     }catch (e) {
         console.log("Error! " +e);
     }
-
-
-
 })();
+
+
 
 
 /* sample result
 
 
-
 {
-  "lastUpdateId": 160,  // Last update ID
-  "bids": [             // Bids to be updated
+  "e": "depthUpdate", // Event type
+  "E": 123456789,     // Event time
+  "s": "BNBBTC",      // Symbol
+  "U": 157,           // First update ID in event
+  "u": 160,           // Final update ID in event
+  "b": [              // Bids to be updated
     [
-      "0.0024",         // price level to be updated
-      "10",             // quantity
-      []                // ignore
+      "0.0024",       // price level to be updated
+      "10",
+      []              // ignore
     ]
   ],
-  "asks": [             // Asks to be updated
+  "a": [              // Asks to be updated
     [
-      "0.0026",         // price level to be updated
-      "100",            // quantity
-      []                // ignore
+      "0.0026",       // price level to be updated
+      "100",          // quantity
+      []              // ignore
     ]
   ]
 }
